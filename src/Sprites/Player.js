@@ -56,7 +56,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
         }
 
         enemyCollision(player,enemy){
-            console.log("I've collided with someone!"+`\n My health is ${this.health}`)
             this.scene.events.emit('enemyHit', this.health)
             if (!this.hitDelay){
                 this.loseHealth()

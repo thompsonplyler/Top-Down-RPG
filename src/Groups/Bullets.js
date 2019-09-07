@@ -4,8 +4,6 @@ export default class Bullets extends Phaser.Physics.Arcade.Group {
     constructor (world, scene, children){
         super(world,scene,children)
         this.scene = scene
-        this.scene.add.existing(this)
-        this.scene.physics.world.enableBody(this,0)
 
         this.createMultiple({
             frameQuantity: 5,
@@ -18,7 +16,6 @@ export default class Bullets extends Phaser.Physics.Arcade.Group {
 
     fireBullet(x,y, direction){
         const bullet = this.getFirstDead(false)
-        console.log(direction)
         if (bullet){       
             bullet.scene.physics.world.enableBody(bullet,0)
             bullet.setPosition(x,y)
@@ -26,7 +23,7 @@ export default class Bullets extends Phaser.Physics.Arcade.Group {
             bullet.visible = true;
             bullet.setScale(.2)
 
-               this.scene.time.addEvent({
+            bullet.timeEvent = this.scene.time.addEvent({
             delay: 1500,
             callback: ()=> {
                 bullet.enable = false;
@@ -60,12 +57,13 @@ export default class Bullets extends Phaser.Physics.Arcade.Group {
         } 
     }
 
-    enemyCollision (enemy,bullet){
-        console.log("There's been a collision!")
-        // bullet.active = false
-        // bullet.visible = false
-        // bullet.scene.physics.disableBody(bullet)
-        // enemy.loseHealth();
+    enemyCollision (bullet,enemy){
+        bullet.body.setVelocity(0)
+        bullet.active = false
+        bullet.visible = false
+        bullet.body.enable = false
+        bullet.timeEvent.destroy()
+        enemy.loseHealth();
     }
 }
      

@@ -13,8 +13,8 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite{
         this.scene.add.existing(this)
 
         this.setScale(4)
-
-        this.timedEvent = this.scene.time.addEvent({
+        
+        this.timeEvent = this.scene.time.addEvent({
             delay: 300,
             callback: this.move,
             loop: true,
@@ -25,7 +25,8 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite{
 
     move(){
         const randNumber = Math.floor(Math.random() * 4+1)
-        switch (randNumber) {
+        if (this.body){
+            switch (randNumber) {
             case 1:
                 this.setVelocityX(100);
                 break;
@@ -46,26 +47,40 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite{
         this.scene.time.addEvent({
             delay: 500,
             callback: ()=>{
-                this.setVelocity(0);
+                if(this.active) this.setVelocity(0);
             },
             callbackScope: this
         })
+    }
+        else {
+            return
+        }
         
 
     }
 
     loseHealth (){
-        this.health--
-        this.tint = 0xff0000;
-        if (this.health === 0) {
-            this.destroy();
-        } else{
-        this.scene.time.addEvent({
-            delay: 200,
-            callback: ()=>{
-                this.tint = 0xffffff;
+        
+        if (!this.hitDelay){
+            this.hitDelay = true;
+            this.tint = 0xff0000;
+            this.health--
+            this.scene.time.addEvent({
+                delay: 200, 
+                callback: ()=>{
+                    this.tint = 0xffffff;
+                    this.hitDelay = false
+                }
+            })
+            if (this.health === 0) {
+                this.body.destroy()
+                this.timeEvent.destroy(true)
+                this.scene.physics.world.disable(this)
+                this.destroy(true);
+
+                return
             }
-            }) 
-    }
-    }
+        }
+
+        }
 }

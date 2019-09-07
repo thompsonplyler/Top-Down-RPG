@@ -41,8 +41,8 @@ gameScene.create = function(){
         this.createPortal()
         this.addCoins()
         this.addEnemies()
-        this.addCollisions()
         this.bullets = new Bullets(this.physics.world,this, []);
+        this.addCollisions()
         
         
         
@@ -95,6 +95,7 @@ gameScene.createPortal = function(){
 
 gameScene.createMap = function(){
         console.log(this._LEVEL)
+        console.log(this)
         
 
         this.add.tileSprite(0,0,8000,8000,'RPGpack_sheet',31)
@@ -173,6 +174,7 @@ gameScene.addCollisions = function(){
   this.physics.add.overlap(this.player,this.portal, this.loadNextLevel.bind(this, false))
   
   this.physics.add.overlap(this.player,this.coinsGroup, this.coinsGroup.collectCoin.bind(this.coinsGroup))
+  this.physics.add.overlap(this.bullets,this.enemiesGroup, this.bullets.enemyCollision)
   
 }
 
